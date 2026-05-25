@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="SQL Tutor",
+    title="AI SQL Tutor",
     version="1.0.0",
     lifespan=lifespan,
 )
