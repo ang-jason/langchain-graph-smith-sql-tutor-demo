@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SQL Tutor — UI Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'DM Sans', sans-serif; padding: 20px; }
+.app { display: flex; flex-direction: column; width: 900px; min-height: 600px; background: #1e2120; border-radius: 12px; overflow: hidden; border: 1px solid #2e3a38; }
+.main { display: flex; height: 680px; overflow: hidden; }
+.left { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.header { display: flex; align-items: center; gap: 10px; padding: 9px 18px; background: #252e2c; border-bottom: 1px solid #2e3a38; flex-shrink: 0; position: relative; }
+.logo-box { width: 26px; height: 26px; background: rgba(0,229,229,0.12); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.header-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: #c8eedd; }
+.header-user { font-size: 12px; color: #8a9bc7; }
+.header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; }
+.header-subtitle { font-size: 12px; color: #8a9bc7; white-space: nowrap; }
+.header-stats { display: flex; align-items: center; gap: 8px; }
+.stat-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a9bc7; display: flex; align-items: center; gap: 3px; }
+.stat-chip .val { color: #00e5e5; }
+.stat-dot { width: 5px; height: 5px; border-radius: 50%; background: #2e3a38; }
+.stat-dot.live { background: #00e5e5; animation: blink 1.1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.stat-sep { color: #2e3a38; }
+.header-pill { margin-left: auto; font-size: 11px; background: rgba(0,229,229,0.1); color: #00e5e5; border: 1px solid rgba(0,229,229,0.25); padding: 2px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+.tab-bar { display: flex; background: #1a2422; border-bottom: 1px solid #2e3a38; flex-shrink: 0; }
+.tab { padding: 7px 16px; font-size: 11px; cursor: pointer; border-bottom: 2px solid transparent; color: #8a9bc7; transition: all 0.15s; user-select: none; }
+.tab.active { color: #00e5e5; border-bottom-color: #00e5e5; }
+.chat { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.q-card { background: #252e2c; border: 1px solid #2e3a38; border-radius: 10px; padding: 12px 14px; }
+.level-badge { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #00e5e5; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 6px; }
+.q-text { font-size: 13px; color: #c8eedd; line-height: 1.65; }
+.schema-card { background: #1a2422; border: 1px solid #2e3a38; border-radius: 8px; padding: 9px 12px; }
+.schema-label { font-size: 10px; color: #8a9bc7; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-weight: 700; }
+.schema-code { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.65; }
+.schema-table { color: #c8a8f0; font-weight: 500; }
+.schema-cols { color: rgba(0,229,229,0.65); }
+.feedback { border-radius: 8px; padding: 10px 12px; display: flex; gap: 8px; }
+.feedback.wrong { background: rgba(180,80,80,0.08); border: 1px solid rgba(180,80,80,0.25); }
+.feedback.correct { background: rgba(0,229,229,0.06); border: 1px solid rgba(0,229,229,0.2); }
+.fb-text { font-size: 12px; line-height: 1.6; }
+.fb-text.wrong { color: #e07a7a; }
+.fb-text.correct { color: #00e5e5; }
+.hint-card { background: #1a2422; border: 1px solid #2e3a38; border-radius: 8px; padding: 8px 12px; display: flex; gap: 8px; }
+.hint-text { font-size: 12px; color: #c8eedd; line-height: 1.55; }
+.hint-num { font-size: 11px; color: #8a9bc7; margin-right: 6px; }
+.result-label { font-size: 10px; color: #8a9bc7; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 5px; font-family: 'Syne', sans-serif; }
+.result-wrap { border: 1px solid #2e3a38; border-radius: 8px; overflow: hidden; }
+.rt { width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 11px; border-collapse: collapse; }
+.rt th { background: #252e2c; color: #8a9bc7; font-weight: 500; padding: 5px 10px; text-align: left; border-bottom: 1px solid #2e3a38; }
+.rt td { padding: 5px 10px; color: #c8eedd; border-bottom: 1px solid #2e3a38; }
+.rt tr:last-child td { border-bottom: none; }
+.editor { border-top: 1px solid #2e3a38; background: #252e2c; flex-shrink: 0; }
+.ed-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; border-bottom: 1px solid #2e3a38; }
+.ed-label { font-size: 10px; color: #8a9bc7; text-transform: uppercase; letter-spacing: 0.09em; font-family: 'Syne', sans-serif; font-weight: 700; }
+.ed-shortcut { font-size: 10px; color: #2e3a38; font-family: 'JetBrains Mono', monospace; }
+textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #c8eedd; padding: 10px 14px; line-height: 1.7; }
+textarea::placeholder { color: #3a4a48; }
+.ed-actions { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid #2e3a38; }
+.btn-run { display: flex; align-items: center; gap: 5px; padding: 6px 14px; background: #00e5e5; color: #1e2120; border: none; border-radius: 8px; font-size: 12px; font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer; }
+.btn-run:hover { opacity: 0.85; }
+.btn-sec { display: flex; align-items: center; gap: 5px; padding: 6px 10px; background: transparent; border: 1px solid #2e3a38; color: #8a9bc7; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.btn-sec:hover { color: #c8eedd; border-color: #5b3f9e; }
+.btn-reset { margin-left: auto; }
+.btn-reset:hover { color: #e05c5c !important; border-color: rgba(224,92,92,0.3) !important; }
+.sidebar { width: 200px; border-left: 1px solid #2e3a38; background: #1a2422; flex-shrink: 0; display: flex; flex-direction: column; padding: 14px; gap: 14px; overflow-y: auto; }
+.sid-label { font-size: 10px; color: #8a9bc7; text-transform: uppercase; letter-spacing: 0.09em; font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 4px; }
+.sid-level { font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 800; color: #00e5e5; line-height: 1; }
+.sid-concept { font-size: 11px; color: #c8eedd; margin-top: 3px; }
+.prog-bar { height: 3px; background: #2e3a38; border-radius: 2px; overflow: hidden; margin-top: 8px; }
+.prog-fill { height: 100%; background: #00e5e5; border-radius: 2px; transition: width 0.5s; }
+.score-card { background: #252e2c; border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; }
+.score-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: #c8eedd; }
+.score-label { font-size: 10px; color: #8a9bc7; }
+.dots { display: flex; gap: 5px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.used { background: #e05c5c; }
+.dot.free { background: transparent; border: 1px solid #2e3a38; }
+.hist-item { display: flex; align-items: center; gap: 6px; font-size: 11px; padding: 3px 0; }
+.hi-icon.ok { color: #00e5e5; }
+.hi-icon.fail { color: #e05c5c; }
+.hi-pts { margin-left: auto; color: #c8eedd; }
+.trace-lnk { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #3a4a48; margin-top: auto; cursor: pointer; text-decoration: none; }
+.trace-lnk:hover { color: #00e5e5; }
+
+/* ── Accordion panels ── */
+.acc-section { border-top: 1px solid #2e3a38; background: #141c1a; flex-shrink: 0; }
+.acc-header { display: flex; align-items: center; gap: 8px; padding: 6px 14px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.acc-header:hover { background: rgba(255,255,255,0.02); }
+.acc-icon { font-size: 11px; flex-shrink: 0; }
+.acc-title { font-size: 10px; font-family: 'Syne', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; }
+.acc-title.ls { color: #e8a020; }
+.acc-title.lg { color: #a58ad4; }
+.acc-title.lc { color: #00e5e5; }
+.acc-summary { font-size: 10px; color: #3a4a48; font-family: 'JetBrains Mono', monospace; margin-left: 6px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-chevron { font-size: 9px; color: #3a4a48; margin-left: auto; transition: transform 0.2s; flex-shrink: 0; }
+.acc-chevron.open { transform: rotate(180deg); }
+.acc-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+.acc-body.open { max-height: 200px; }
+.acc-inner { padding: 8px 14px 10px; border-top: 1px solid #2e3a38; overflow-y: auto; max-height: 192px; }
+
+/* LangSmith content */
+.ls-run { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1e2a28; }
+.ls-run:last-child { border-bottom: none; }
+.ls-run-name { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #c8eedd; flex: 1; }
+.ls-run-type { font-size: 9px; padding: 1px 5px; border-radius: 3px; background: rgba(232,160,32,0.12); color: #e8a020; border: 1px solid rgba(232,160,32,0.25); flex-shrink: 0; }
+.ls-run-tok { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a9bc7; flex-shrink: 0; }
+.ls-run-ms { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a9bc7; flex-shrink: 0; min-width: 44px; text-align: right; }
+.ls-run-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.ls-run-dot.ok { background: #00e5e5; }
+.ls-run-dot.pending { background: #e8a020; animation: blink 0.8s infinite; }
+.ls-empty { font-size: 10px; color: #3a4a48; font-family: 'JetBrains Mono', monospace; }
+
+/* LangGraph content */
+.graph-flow { display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; overflow-x: auto; padding: 4px 0 6px; }
+.gn { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+.gn-box { padding: 4px 8px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; border: 1px solid #2e3a38; color: #3a4a48; background: #1a2422; white-space: nowrap; transition: all 0.35s; }
+.gn-box.active { background: rgba(91,63,158,0.35); border-color: #7a5abf; color: #c8a8f0; box-shadow: 0 0 10px rgba(91,63,158,0.35); }
+.gn-box.done { background: rgba(0,229,229,0.08); border-color: rgba(0,229,229,0.3); color: #00e5e5; }
+.gn-lbl { font-size: 8px; color: #3a4a48; text-align: center; max-width: 56px; line-height: 1.2; }
+.gn-lbl.active { color: #a58ad4; }
+.gn-lbl.done { color: #00b3b3; }
+.garr { font-size: 10px; color: #2e3a38; flex-shrink: 0; padding-bottom: 12px; transition: color 0.3s; }
+.garr.done { color: #00e5e5; }
+.garr.active { color: #7a5abf; }
+
+/* LangChain content */
+.tr-row { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 0; }
+.tr-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.tr-dot.pending { background: #5b3f9e; animation: blink 0.8s infinite; }
+.tr-dot.ok { background: #00e5e5; }
+.tr-dot.err { background: #e05c5c; }
+.tr-tag { padding: 1px 5px; border-radius: 3px; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+.tr-tag.lc { background: rgba(0,229,229,0.08); color: #00e5e5; border: 1px solid rgba(0,229,229,0.2); }
+.tr-node { color: #c8eedd; flex: 1; }
+.tr-ms { color: #3a4a48; }
+.tr-ms.done { color: #8a9bc7; }
+.tr-empty { font-size: 10px; color: #3a4a48; font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header — Option 4 stats -->
+  <div class="header">
+    <div class="logo-box">🗃️</div>
+    <span class="header-title">SQL Tutor</span>
+    <span class="header-user">— Alice</span>
+    <div class="header-center">
+      <span class="header-subtitle">Powered by LangChain · LangGraph · LangSmith</span>
+      <div class="header-stats">
+        <div class="stat-chip"><div class="stat-dot" id="statDot"></div></div>
+        <div class="stat-chip">LLM calls <span class="val" id="statCalls">—</span></div>
+        <span class="stat-sep">·</span>
+        <div class="stat-chip">Tokens <span class="val" id="statTokens">—</span></div>
+        <span class="stat-sep">·</span>
+        <div class="stat-chip">Latency <span class="val" id="statLatency">—</span></div>
+      </div>
+    </div>
+    <div class="header-pill" id="headerPill">Level 4 · INNER JOIN</div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="left">
+      <div class="tab-bar">
+        <div class="tab active" onclick="switchTab('session',this)">Session</div>
+        <div class="tab" onclick="switchTab('history',this)">History (3)</div>
+      </div>
+      <div id="tabSession" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="chat" id="chatArea">
+          <div class="q-card">
+            <div class="level-badge">Level 4 · Inner Join</div>
+            <div class="q-text">List the name of each employee along with the name of their department. Include only active employees.</div>
+          </div>
+          <div class="schema-card">
+            <div class="schema-label">Schema</div>
+            <div class="schema-code" id="schemaCode"></div>
+          </div>
+          <div class="feedback wrong" id="feedbackEl" style="display:none">
+            <span style="font-size:14px;color:#e05c5c;flex-shrink:0;margin-top:1px">✗</span>
+            <div class="fb-text wrong" id="feedbackMsg"></div>
+          </div>
+          <div id="hintArea"></div>
+          <div id="resultArea" style="display:none">
+            <div class="result-label">Your result <span style="color:#3a4a48">(rows shown)</span></div>
+            <div class="result-wrap">
+              <table class="rt"><thead><tr><th>name</th><th>department</th></tr></thead>
+              <tbody id="resultRows"></tbody></table>
+            </div>
+          </div>
+        </div>
+        <div class="editor">
+          <div class="ed-header">
+            <span class="ed-label">SQL Editor</span>
+            <span class="ed-shortcut">⌘↵ to run</span>
+          </div>
+          <textarea id="sqlInput" rows="3" placeholder="Write your SQL here..."></textarea>
+          <div class="ed-actions">
+            <button class="btn-run" onclick="runSQL()">▶ Run</button>
+            <button class="btn-sec" onclick="getHint()">💡 Hint (<span id="hintsLeft">3</span>)</button>
+            <button class="btn-sec btn-reset" onclick="resetSession()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+      <div id="tabHistory" style="display:none;flex:1;overflow-y:auto;padding:14px;flex-direction:column;"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div>
+        <div class="sid-label">Level</div>
+        <div class="sid-level" id="sideLevel">4</div>
+        <div class="sid-concept" id="sideConcept">Inner Join</div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:43%"></div></div>
+      </div>
+      <div class="score-card">
+        <span style="font-size:16px">🏆</span>
+        <div><div class="score-label">Score</div><div class="score-val" id="scoreVal">7</div></div>
+      </div>
+      <div>
+        <div class="sid-label">Attempts</div>
+        <div class="dots" id="attemptDots">
+          <div class="dot free"></div><div class="dot free"></div><div class="dot free"></div>
+        </div>
+        <div style="font-size:11px;color:#8a9bc7;margin-top:4px" id="attLeft">3 remaining</div>
+      </div>
+      <div id="hintCountRow" style="display:none">
+        <div class="sid-label">Hints used</div>
+        <div style="font-size:13px;color:#00e5e5" id="hintCount">0/3</div>
+      </div>
+      <div>
+        <div class="sid-label">History</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="hist-item"><span class="hi-icon ok">✓</span><span style="color:#8a9bc7;font-size:11px">L3</span><span style="color:#c8eedd;font-size:11px;flex:1;margin-left:4px">Aggregates</span><span class="hi-pts">+3</span></div>
+          <div class="hist-item"><span class="hi-icon ok">✓</span><span style="color:#8a9bc7;font-size:11px">L2</span><span style="color:#c8eedd;font-size:11px;flex:1;margin-left:4px">Order By</span><span class="hi-pts">+2</span></div>
+          <div class="hist-item"><span class="hi-icon ok">✓</span><span style="color:#8a9bc7;font-size:11px">L1</span><span style="color:#c8eedd;font-size:11px;flex:1;margin-left:4px">Select+Where</span><span class="hi-pts">+2</span></div>
+        </div>
+      </div>
+      <a class="trace-lnk" id="traceLnk" href="#" onclick="return false" style="display:none">
+        🔗 View in LangSmith
+      </a>
+    </div>
+  </div>
+
+  <!-- Accordion 1: LangSmith -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc('ls')">
+      <span class="acc-icon" style="color:#e8a020">◈</span>
+      <span class="acc-title ls">LangSmith</span>
+      <span class="acc-summary" id="lsSummary">— run trace · observability &amp; evals</span>
+      <span class="acc-chevron" id="lsChevron">▼</span>
+    </div>
+    <div class="acc-body" id="lsBody">
+      <div class="acc-inner" id="lsInner">
+        <div class="ls-empty">No runs yet. Submit SQL to populate.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 2: LangGraph -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc('lg')">
+      <span class="acc-icon" style="color:#a58ad4">⬡</span>
+      <span class="acc-title lg">LangGraph</span>
+      <span class="acc-summary" id="lgSummary">— state machine · node execution flow</span>
+      <span class="acc-chevron" id="lgChevron">▼</span>
+    </div>
+    <div class="acc-body" id="lgBody">
+      <div class="acc-inner">
+        <div class="graph-flow" id="graphFlow"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 3: LangChain -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc('lc')">
+      <span class="acc-icon" style="color:#00e5e5">⬢</span>
+      <span class="acc-title lc">LangChain</span>
+      <span class="acc-summary" id="lcSummary">— chain &amp; prompt execution trace</span>
+      <span class="acc-chevron" id="lcChevron">▼</span>
+    </div>
+    <div class="acc-body" id="lcBody">
+      <div class="acc-inner" id="lcInner">
+        <div class="tr-empty">No runs yet. Submit SQL to trace.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+let attempts=0, hintsUsed=0, totalCalls=0, totalTokens=0
+const accState={ls:false,lg:false,lc:false}
+
+function renderSchema(lines){
+  return lines.map(line=>{
+    const m=line.match(/^(\w+)(\(.+\))$/)
+    if(!m) return `<span class="schema-cols">${line}</span>`
+    return `<span class="schema-table">${m[1]}</span><span class="schema-cols">${m[2]}</span>`
+  }).join('<br>')
+}
+document.getElementById('schemaCode').innerHTML=renderSchema([
+  'employees(id, name, email, department_id, hire_date, is_active)',
+  'departments(id, name, location, budget)'
+])
+
+function toggleAcc(id){
+  accState[id]=!accState[id]
+  document.getElementById(id+'Body').classList.toggle('open',accState[id])
+  document.getElementById(id+'Chevron').classList.toggle('open',accState[id])
+}
+function openAcc(id){
+  if(!accState[id]){accState[id]=true;document.getElementById(id+'Body').classList.add('open');document.getElementById(id+'Chevron').classList.add('open')}
+}
+
+// ── Graph ──
+const NODES=[
+  {id:'gen_q',box:'gen_q',lbl:'generate question'},
+  {id:'await',box:'await',lbl:'await answer'},
+  {id:'grade',box:'grade',lbl:'grade answer'},
+  {id:'branch',box:'route',lbl:'route logic'},
+  {id:'hint',box:'hint',lbl:'give hint'},
+  {id:'level_up',box:'lvl_up',lbl:'level up'},
+  {id:'complete',box:'done',lbl:'complete'},
+]
+function renderGraph(activeId,doneIds=[]){
+  document.getElementById('graphFlow').innerHTML=NODES.map((n,i)=>{
+    const a=n.id===activeId,d=doneIds.includes(n.id)
+    const bc=a?'active':d?'done':''
+    const ac=i<NODES.length-1?(d?'done':a?'active':''):''
+    return `<div class="gn"><div class="gn-box ${bc}">${n.box}</div><div class="gn-lbl ${bc}">${n.lbl}</div></div>${i<NODES.length-1?`<div class="garr ${ac}">→</div>`:''}`
+  }).join('')
+}
+renderGraph(null)
+
+// ── LangChain trace ──
+function addLcRow(node,status='pending'){
+  const id='r'+Date.now()+Math.random().toString(36).slice(2)
+  const el=document.createElement('div'); el.className='tr-row'; el.id=id
+  el.innerHTML=`<div class="tr-dot pending" id="d${id}"></div><span class="tr-tag lc">LangChain</span><span class="tr-node">${node}</span><span class="tr-ms" id="m${id}">...</span>`
+  document.getElementById('lcInner').appendChild(el)
+  return id
+}
+function doneLcRow(id,ms){
+  const d=document.getElementById('d'+id),m=document.getElementById('m'+id)
+  if(d)d.className='tr-dot ok'; if(m){m.textContent=ms+'ms';m.className='tr-ms done'}
+}
+
+// ── LangSmith runs ──
+function addLsRun(name,type,tokens,ms,status='ok'){
+  const el=document.createElement('div'); el.className='ls-run'
+  el.innerHTML=`<div class="ls-run-dot ${status}"></div><div class="ls-run-name">${name}</div><span class="ls-run-type">${type}</span><span class="ls-run-tok">${tokens} tok</span><span class="ls-run-ms">${ms}ms</span>`
+  document.getElementById('lsInner').appendChild(el)
+}
+
+const delay=ms=>new Promise(r=>setTimeout(r,ms))
+
+async function simulate(correct){
+  // clear
+  document.getElementById('lcInner').innerHTML=''
+  document.getElementById('lsInner').innerHTML=''
+  document.getElementById('statDot').classList.add('live')
+  openAcc('lg'); openAcc('lc'); openAcc('ls')
+  renderGraph('grade')
+  document.getElementById('lgSummary').textContent='▶ grade_answer_node executing...'
+
+  // LangGraph: grade node
+  await delay(260)
+  renderGraph('grade',[])
+  document.getElementById('lgSummary').textContent='grade_answer_node → '+(correct?'correct':'wrong')
+
+  // LangChain: grader queries
+  let r=addLcRow('grader.exec_query(user_sql)')
+  await delay(110); doneLcRow(r,41); totalCalls++
+  r=addLcRow('grader.exec_query(reference_sql)')
+  await delay(90); doneLcRow(r,23); totalCalls++
+
+  if(!correct){
+    renderGraph('hint',['grade'])
+    document.getElementById('lgSummary').textContent='grade → route → give_hint_node'
+    r=addLcRow('hint_chain.invoke  →  claude-sonnet-4-5')
+    document.getElementById('lcSummary').textContent='▶ hint_chain running...'
+    await delay(450); const t=175+Math.floor(Math.random()*80); totalTokens+=t; doneLcRow(r,398); totalCalls++
+    addLsRun('grade_answer','chain',0,14)
+    addLsRun('hint_chain.invoke','llm',t,398)
+    const lat=880
+    setStats(totalCalls,totalTokens,lat)
+    document.getElementById('lcSummary').textContent=`hint_chain → ${t} tokens · 398ms`
+    document.getElementById('lsSummary').textContent=`2 runs · ${t} tokens · ${lat}ms total`
+  } else {
+    renderGraph('level_up',['grade'])
+    document.getElementById('lgSummary').textContent='grade → level_up → generate_question'
+    await delay(80)
+    renderGraph('gen_q',['grade','level_up'])
+    r=addLcRow('question_chain.invoke  →  claude-sonnet-4-5')
+    document.getElementById('lcSummary').textContent='▶ question_chain running...'
+    await delay(520); const t=325+Math.floor(Math.random()*100); totalTokens+=t; doneLcRow(r,491); totalCalls++
+    addLsRun('grade_answer','chain',0,14)
+    addLsRun('level_up','chain',0,6)
+    addLsRun('question_chain.invoke','llm',t,491)
+    renderGraph('await',['gen_q','grade','level_up'])
+    const lat=1320
+    setStats(totalCalls,totalTokens,lat)
+    document.getElementById('lcSummary').textContent=`question_chain → ${t} tokens · 491ms`
+    document.getElementById('lsSummary').textContent=`3 runs · ${t} tokens · ${lat}ms total`
+    document.getElementById('lgSummary').textContent='grade → level_up → gen_q → await_answer'
+  }
+  document.getElementById('statDot').classList.remove('live')
+  const lnk=document.getElementById('traceLnk'); if(lnk)lnk.style.display='flex'
+}
+
+function setStats(calls,tokens,ms){
+  document.getElementById('statCalls').textContent=calls
+  document.getElementById('statTokens').textContent=tokens.toLocaleString()
+  document.getElementById('statLatency').textContent=ms+'ms'
+}
+function updateDots(){
+  document.getElementById('attemptDots').innerHTML=[0,1,2].map(i=>`<div class="dot ${i<attempts?'used':'free'}"></div>`).join('')
+  document.getElementById('attLeft').textContent=`${3-attempts} remaining`
+}
+function resetSession(){
+  attempts=0;hintsUsed=0;totalCalls=0;totalTokens=0
+  document.getElementById('feedbackEl').style.display='none'
+  document.getElementById('resultArea').style.display='none'
+  document.getElementById('hintArea').innerHTML=''
+  document.getElementById('sqlInput').value=''
+  document.getElementById('hintsLeft').textContent='3'
+  document.getElementById('hintCountRow').style.display='none'
+  document.getElementById('lcInner').innerHTML='<div class="tr-empty">No runs yet. Submit SQL to trace.</div>'
+  document.getElementById('lsInner').innerHTML='<div class="ls-empty">No runs yet. Submit SQL to populate.</div>'
+  document.getElementById('lcSummary').textContent='— chain &amp; prompt execution trace'
+  document.getElementById('lsSummary').textContent='— run trace · observability &amp; evals'
+  document.getElementById('lgSummary').textContent='— state machine · node execution flow'
+  setStats('—','—','—')
+  renderGraph(null)
+  updateDots()
+  const lnk=document.getElementById('traceLnk'); if(lnk)lnk.style.display='none'
+}
+async function runSQL(){
+  const sql=(document.getElementById('sqlInput').value||'').trim().toLowerCase()
+  if(!sql)return
+  const correct=sql.includes('join')&&sql.includes('where')
+  const fb=document.getElementById('feedbackEl'),msg=document.getElementById('feedbackMsg')
+  if(!correct){
+    attempts=Math.min(attempts+1,3); updateDots()
+    fb.style.display='flex'; fb.className='feedback wrong'; msg.className='fb-text wrong'
+    msg.textContent=['Got 30 rows, expected 28. Missing WHERE is_active = 1.','Your query is missing the JOIN. Connect via department_id.','Max attempts reached. Reference: SELECT e.name, d.name FROM employees e JOIN departments d ON e.department_id = d.id WHERE e.is_active = 1'][Math.min(attempts-1,2)]
+    document.getElementById('resultRows').innerHTML=[['Alice Chen','Engineering'],['Bob Martinez','Engineering'],['Grace Park','HR']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')
+    document.getElementById('resultArea').style.display='block'
+    await simulate(false); return
+  }
+  fb.style.display='flex'; fb.className='feedback correct'; msg.className='fb-text correct'
+  msg.innerHTML='✓ &nbsp;Correct! JOIN and WHERE clause are both right. 28 rows matched.'
+  document.getElementById('resultRows').innerHTML=[['Alice Chen','Engineering'],['Bob Martinez','Engineering'],['Grace Park','HR'],['Karen Davis','Sales'],['Quinn Baker','Finance']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')
+  document.getElementById('resultArea').style.display='block'
+  document.getElementById('scoreVal').textContent='10'
+  document.getElementById('sideLevel').textContent='5'
+  document.getElementById('sideConcept').textContent='Group By + Having'
+  document.getElementById('progFill').style.width='57%'
+  document.getElementById('headerPill').textContent='Level 5 · GROUP BY'
+  await simulate(true)
+}
+function getHint(){
+  if(hintsUsed>=3)return; hintsUsed++
+  document.getElementById('hintsLeft').textContent=3-hintsUsed
+  const hints=["You'll need JOIN to combine employees and departments.","Join condition: e.department_id = d.id — alias your tables.","Don't forget WHERE e.is_active = 1 to exclude inactive employees."]
+  const el=document.createElement('div'); el.className='hint-card'
+  el.innerHTML=`<span style="font-size:13px;color:#8a9bc7">💡</span><div class="hint-text"><span class="hint-num">Hint ${hintsUsed}</span>${hints[hintsUsed-1]}</div>`
+  document.getElementById('hintArea').appendChild(el)
+  document.getElementById('hintCountRow').style.display='block'
+  document.getElementById('hintCount').textContent=`${hintsUsed}/3`
+}
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active')
+  const ts=document.getElementById('tabSession'),th=document.getElementById('tabHistory')
+  if(tab==='history'){
+    ts.style.display='none'; th.style.display='flex'; th.style.flexDirection='column'
+    th.innerHTML=`<div style="padding:14px"><div style="font-size:11px;color:#8a9bc7;margin-bottom:8px">3 questions completed · 7 pts</div>${[
+      {l:3,q:'Average salary per department?',sql:'SELECT d.name, AVG(s.amount) FROM departments d JOIN salaries s ON...',pts:3},
+      {l:2,q:'Find 5 highest paid employees.',sql:'SELECT name FROM employees ORDER BY amount DESC LIMIT 5',pts:2},
+      {l:1,q:'Active employees in Engineering.',sql:'SELECT * FROM employees WHERE department_id=1 AND is_active=1',pts:2}
+    ].map(h=>`<div style="background:#252e2c;border:1px solid #2e3a38;border-radius:8px;padding:10px 12px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span style="color:#00e5e5">✓</span><span style="font-size:10px;color:#8a9bc7;text-transform:uppercase;letter-spacing:.08em;font-family:Syne,sans-serif">L${h.l}</span><span style="margin-left:auto;font-size:11px;color:#00e5e5">+${h.pts}pts</span></div><div style="font-size:12px;color:#c8eedd;margin-bottom:4px">${h.q}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a9bc7;background:#1a2422;padding:5px 8px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${h.sql}</div></div>`).join('')}</div>`
+  } else { ts.style.display='flex'; th.style.display='none' }
+}
+</script>
+</body>
+</html>

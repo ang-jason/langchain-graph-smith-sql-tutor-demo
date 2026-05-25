@@ -1,0 +1,58 @@
+[
+  {
+    "level": 1,
+    "concept": "SELECT + WHERE",
+    "tables": ["employees"],
+    "template": "Filter employees by a specific condition (department, status, hire date, etc.)",
+    "example_reference_sql": "SELECT * FROM employees WHERE is_active = 1",
+    "schema_hint": "employees(id, name, email, department_id, hire_date, is_active)"
+  },
+  {
+    "level": 2,
+    "concept": "ORDER BY + LIMIT",
+    "tables": ["employees", "salaries"],
+    "template": "Find top-N or bottom-N employees/salaries using ordering and limiting",
+    "example_reference_sql": "SELECT * FROM employees ORDER BY hire_date ASC LIMIT 5",
+    "schema_hint": "employees(id, name, email, department_id, hire_date, is_active), salaries(id, employee_id, amount, effective_date)"
+  },
+  {
+    "level": 3,
+    "concept": "Aggregate functions (COUNT, AVG, SUM, MIN, MAX)",
+    "tables": ["employees", "salaries", "departments"],
+    "template": "Compute aggregate statistics across employees or salaries",
+    "example_reference_sql": "SELECT COUNT(*) FROM employees WHERE is_active = 1",
+    "schema_hint": "employees(id, name, department_id, is_active), salaries(id, employee_id, amount, effective_date), departments(id, name)"
+  },
+  {
+    "level": 4,
+    "concept": "INNER JOIN",
+    "tables": ["employees", "departments"],
+    "template": "Join employees with departments to show combined information",
+    "example_reference_sql": "SELECT e.name, d.name as department FROM employees e JOIN departments d ON e.department_id = d.id",
+    "schema_hint": "employees(id, name, email, department_id, hire_date, is_active), departments(id, name, location, budget)"
+  },
+  {
+    "level": 5,
+    "concept": "GROUP BY + HAVING",
+    "tables": ["employees", "salaries", "departments"],
+    "template": "Group records and filter groups using HAVING clause",
+    "example_reference_sql": "SELECT department_id, COUNT(*) as cnt FROM employees GROUP BY department_id HAVING cnt > 3",
+    "schema_hint": "employees(id, name, department_id, is_active), salaries(id, employee_id, amount, effective_date), departments(id, name)"
+  },
+  {
+    "level": 6,
+    "concept": "Subqueries",
+    "tables": ["employees", "salaries"],
+    "template": "Use a subquery to filter or compute based on an inner query result",
+    "example_reference_sql": "SELECT name FROM employees WHERE id IN (SELECT employee_id FROM salaries WHERE amount > 100000)",
+    "schema_hint": "employees(id, name, department_id, is_active), salaries(id, employee_id, amount, effective_date)"
+  },
+  {
+    "level": 7,
+    "concept": "Window functions (ROW_NUMBER, RANK, LAG, etc.)",
+    "tables": ["employees", "salaries", "departments"],
+    "template": "Use window functions to rank or compare rows without collapsing groups",
+    "example_reference_sql": "SELECT name, amount, RANK() OVER (ORDER BY amount DESC) as salary_rank FROM employees e JOIN salaries s ON e.id = s.employee_id WHERE s.effective_date = '2024-01-01'",
+    "schema_hint": "employees(id, name, department_id), salaries(id, employee_id, amount, effective_date), departments(id, name)"
+  }
+]
