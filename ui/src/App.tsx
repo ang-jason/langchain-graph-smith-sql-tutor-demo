@@ -197,6 +197,7 @@ export default function App() {
             disabled={loading}
             hintsRemaining={session ? session.max_attempts - session.hints_shown.length : 0}
             sessionComplete={session?.status === 'complete'}
+            referenceSql={session?.reference_sql}
           />
         </div>
         {session && <StateSidebar session={session} />}

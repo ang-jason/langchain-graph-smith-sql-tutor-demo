@@ -52,6 +52,7 @@ def _serialize(state: dict) -> dict:
         "status":           state["status"],
         "current_question": state["current_question"],
         "schema_hint":      state["schema_hint"],
+        "reference_sql":    state["reference_sql"],
         "attempts":         state["attempts"],
         "max_attempts":     state["max_attempts"],
         "hints_shown":      state["hints_shown"],

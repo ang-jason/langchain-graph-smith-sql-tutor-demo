@@ -8,6 +8,7 @@ export interface SessionState {
   status: 'awaiting_answer' | 'complete'
   current_question: string
   schema_hint: string
+  reference_sql: string
   attempts: number
   max_attempts: number
   hints_shown: string[]
