@@ -66,9 +66,23 @@ def health():
     key_name = key_map.get(provider)
     llm_ok = True if key_name is None else bool(os.getenv(key_name))
 
+    default_models = {
+        "groq":      "llama-3.3-70b-versatile",
+        "anthropic": "claude-sonnet-4-5",
+        "openai":    "gpt-4o-mini",
+        "gemini":    "gemini-1.5-flash",
+        "mistral":   "mistral-large-latest",
+        "cohere":    "command-r-plus",
+        "together":  "meta-llama/Llama-3-70b-chat-hf",
+        "fireworks": "accounts/fireworks/models/llama-v3-70b-instruct",
+        "ollama":    "llama3",
+    }
+    model = os.getenv("LLM_MODEL", default_models.get(provider, "unknown"))
+
     return {
-        "status":   "ok" if all([db_ok, llm_ok]) else "degraded",
-        "db":       "connected" if db_ok else "missing",
-        "llm":      f"{provider} — {'connected' if llm_ok else 'missing key'}",
+        "status":    "ok" if all([db_ok, llm_ok]) else "degraded",
+        "db":        "connected" if db_ok else "missing",
+        "llm":       f"{provider} — {'connected' if llm_ok else 'missing key'}",
+        "model":     model,
         "langsmith": "connected" if langsmith_ok else "not configured",
     }
