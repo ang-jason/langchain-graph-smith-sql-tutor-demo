@@ -19,7 +19,7 @@ def _build_llm() -> BaseChatModel:
     if provider == "groq":
         from langchain_groq import ChatGroq
         return ChatGroq(
-            model=os.getenv("LLM_MODEL", "llama3-70b-8192"),
+            model=os.getenv("LLM_MODEL", "llama-3.3-70b-versatile"),
             api_key=os.getenv("GROQ_API_KEY"),
         )
 
