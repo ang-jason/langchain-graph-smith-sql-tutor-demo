@@ -5,6 +5,140 @@
 
 ---
 
+## Table of Contents
+
+- [How It Works](#how-it-works)
+- [Top Picks](#top-picks)
+- [Question Strategy](#question-strategy)
+- [Architect Prompt](#architect-prompt)
+- [1. High-Level Architecture](#1-high-level-architecture)
+- [2. Data Model](#2-data-model)
+- [3. API Design](#3-api-design)
+- [4. Core Mechanisms](#4-core-mechanisms)
+- [5. Implementation Roadmap](#5-implementation-roadmap)
+- [6. Component Block Diagram](#6-component-block-diagram)
+- [7. Service Limits & Cost Analysis](#7-service-limits--cost-analysis)
+- [Out of Scope](#out-of-scope)
+- [LLM Providers](#llm-providers)
+- [Environment Variables](#environment-variables)
+- [Quick Start](#quick-start)
+- [Deployment (Render)](#deployment-render)
+- [FAQ](#faq)
+
+---
+
+## How It Works
+
+### Where the AI / LLM Is
+
+The LLM (default: Groq → `llama-3.3-70b-versatile`) is the AI brain. It does 3 things:
+
+| When | LLM does what |
+|---|---|
+| Session starts | Generates a SQL question for your level |
+| You answer wrong | Writes a progressive hint without revealing the answer |
+| You answer wrong | Explains what went wrong in plain English |
+
+**Grading is NOT AI** — it's pure SQLite execution + Python result-set comparison. The LLM never judges correctness.
+
+---
+
+### What Each Lang Product Does
+
+#### LangChain
+Wraps LLM calls into reusable prompt templates.
+
+```
+Your level + schema + history
+        ↓
+   Prompt Template     ← LangChain builds this
+        ↓
+   LLM (Groq/llama)    ← LLM generates here
+        ↓
+   Returns: question + reference SQL
+```
+
+Without LangChain you'd write raw API calls every time. LangChain standardises the interface so you can swap Groq → OpenAI → Anthropic with one env var change.
+
+---
+
+#### LangGraph
+Manages the state machine — decides what happens next after each action.
+
+```
+User submits SQL
+       ↓
+  grade_answer_node   ← run SQL, compare results
+       ↓
+  route_after_grade   ← decision point
+    ├─ correct     → level_up → generate_question  (LLM called)
+    ├─ wrong       → give_hint                     (LLM called)
+    └─ 3 attempts  → force_next → generate_question (LLM called)
+```
+
+Without LangGraph you'd write if/else logic manually and manage state yourself.
+
+---
+
+#### LangSmith
+Observes everything — records every node, every LLM call, every input/output.
+
+```
+grade_answer_node  → records: input SQL, result rows, latency
+give_hint_node     → records: prompt sent to LLM
+LLM call           → records: tokens used, latency, full response
+```
+
+Without LangSmith you'd have no visibility into why a hint was bad, how many tokens were used, or where the pipeline is slow.
+
+---
+
+### Full Flow — One User Action
+
+```
+User types:  SELECT * FROM employees
+User clicks: Run
+                │
+                ▼
+        grader.py (pure Python)
+        runs SQL on SQLite → 30 rows
+        runs reference SQL → 28 rows
+        30 ≠ 28 → outcome = "wrong"
+                │
+                ▼
+        LangGraph routes → give_hint_node
+                │
+                ▼
+        LangChain builds prompt:
+        "Question: ..., User SQL: ..., Hints given: none"
+                │
+                ▼
+        LLM (Groq llama) generates:
+        "Try adding WHERE is_active = 1 to filter inactive employees"
+                │
+                ▼
+        LangSmith records entire run
+                │
+                ▼
+        Frontend shows hint to user
+```
+
+---
+
+### One-Line Summary
+
+| Product | Role |
+|---|---|
+| **LangChain** | Formats prompts + calls the LLM |
+| **LangGraph** | Decides what to do next based on state |
+| **LangSmith** | Records everything for debugging and analysis |
+| **LLM (Groq)** | The actual AI — generates questions, hints, explanations |
+| **FastAPI** | Backend API serving the frontend |
+| **SQLite** | Executes SQL queries for grading |
+| **React** | Frontend UI |
+
+---
+
 ## Top Picks
 
 Best candidates — simplest use cases that meaningfully use all 3 Lang products:
