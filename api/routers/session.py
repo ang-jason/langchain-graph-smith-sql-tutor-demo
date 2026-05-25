@@ -24,14 +24,6 @@ def start(req: StartSessionRequest):
     return _serialize(state)
 
 
-@router.get("/{session_id}")
-def get_session(session_id: str):
-    state = sessions.get(session_id)
-    if not state:
-        raise HTTPException(404, f"Session {session_id} not found")
-    return _serialize(state)
-
-
 @router.post("/reset")
 def reset(req: ResetSessionRequest):
     state = sessions.get(req.session_id)
@@ -41,6 +33,14 @@ def reset(req: ResetSessionRequest):
     new_state = start_session(state["user_name"], 1)
     sessions.save(new_state)
     return _serialize(new_state)
+
+
+@router.get("/{session_id}")
+def get_session(session_id: str):
+    state = sessions.get(session_id)
+    if not state:
+        raise HTTPException(404, f"Session {session_id} not found")
+    return _serialize(state)
 
 
 def _serialize(state: dict) -> dict:
