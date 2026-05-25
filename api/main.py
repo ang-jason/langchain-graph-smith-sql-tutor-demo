@@ -49,7 +49,7 @@ app.include_router(hint.router,   prefix="/api/v1")
 def health():
     db_path = os.getenv("DATABASE_PATH", "./data/sample.db")
     db_ok = os.path.exists(db_path)
-    langsmith_ok = bool(os.getenv("LANGCHAIN_API_KEY"))
+    langsmith_ok = bool(os.getenv("LANGCHAIN_API_KEY") or os.getenv("LANGSMITH_API_KEY"))
     provider = os.getenv("LLM_PROVIDER", "groq").lower()
 
     key_map = {
