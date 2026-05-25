@@ -90,14 +90,44 @@ def start_session(user_name: str, start_level: int = 1) -> TutorState:
 
 def submit_answer(state: TutorState, user_sql: str) -> TutorState:
     """Grade the user's SQL and advance the state."""
-    updated = {**state, "user_sql": user_sql}
-    result = tutor_graph.invoke(updated, {"configurable": {"entry_point": "grade_answer"}})
-    return result
+    from agent.nodes import (
+        grade_answer_node, give_hint_node, level_up_node,
+        force_next_node, session_complete_node,
+        generate_question_node, route_after_grade, route_after_level
+    )
+
+    # Step 1: grade
+    state = {**state, "user_sql": user_sql}
+    state = grade_answer_node(state)
+
+    # Step 2: route
+    route = route_after_grade(state)
+
+    if route == "correct":
+        state = level_up_node(state)
+        next_route = route_after_level(state)
+        if next_route == "complete":
+            state = session_complete_node(state)
+        else:
+            state = generate_question_node(state)
+
+    elif route == "wrong":
+        state = give_hint_node(state)
+
+    elif route == "max_attempts":
+        state = force_next_node(state)
+        next_route = route_after_level(state)
+        if next_route == "complete":
+            state = session_complete_node(state)
+        else:
+            state = generate_question_node(state)
+
+    return state
 
 
 def request_hint(state: TutorState) -> TutorState:
     """Generate next hint for the current question."""
     if len(state.get("hints_shown", [])) >= state.get("max_attempts", 3):
-        return state  # no more hints
-    result = tutor_graph.invoke(state, {"configurable": {"entry_point": "give_hint"}})
-    return result
+        return state
+    from agent.nodes import give_hint_node
+    return give_hint_node(state)
