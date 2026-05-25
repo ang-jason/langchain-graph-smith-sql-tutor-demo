@@ -1,6 +1,6 @@
-# SQL Tutor — System Design
+# AI SQL Tutor — System Design
 
-> A SQL tutor that adapts based on whether you got it right.
+> AI SQL tutor that adapts based on whether you got it right.
 > Built with LangChain + LangGraph + LangSmith + FastAPI + React.
 
 ---
@@ -871,7 +871,7 @@ Switch providers via `LLM_PROVIDER` in `.env`. Only one key needed at a time.
 
 | Provider | `LLM_PROVIDER` | Default Model | Free Tier | Sign Up |
 |---|---|---|---|---|
-| **Groq** ⭐ default | `groq` | `llama3-70b-8192` | ✅ No credit card | console.groq.com |
+| **Groq** ⭐ default | `groq` | `llama-3.3-70b-versatile` | ✅ No credit card | console.groq.com |
 | Anthropic | `anthropic` | `claude-sonnet-4-5` | $5 credit | console.anthropic.com |
 | OpenAI | `openai` | `gpt-4o-mini` | $5 credit | platform.openai.com |
 | Google Gemini | `gemini` | `gemini-1.5-flash` | ✅ Free tier | aistudio.google.com |
@@ -968,7 +968,7 @@ Render dashboard → **New Web Service** → connect repo
 |---|---|
 | Root directory | `.` |
 | Runtime | Python |
-| Build command | `uv sync` |
+| Build command | `pip install uv && uv sync` |
 | Start command | `uv run python run.py` |
 | Instance type | Free |
 
