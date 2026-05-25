@@ -3,10 +3,7 @@ import uuid
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from agent.graph import start_session
-# Before (wrong) from agent import sessions
-# After (correct)
 from api import sessions
-
 
 router = APIRouter(prefix="/session", tags=["session"])
 
