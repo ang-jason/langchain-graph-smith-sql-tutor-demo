@@ -3,9 +3,9 @@
 > AI SQL tutor that adapts based on whether you got it right.
 > Built with LangChain + LangGraph + LangSmith + FastAPI + React.
 ## Demo
-[Frontend Demo](https://sql-tutor-frontend.onrender.com/)
-[Backend Demo](https://sql-tutor-backend.onrender.com/)
-[Backend Health Check](https://sql-tutor-backend.onrender.com/api/v1/health)
+- [Frontend Demo](https://sql-tutor-frontend.onrender.com/)
+- [Backend Demo](https://sql-tutor-backend.onrender.com/)
+- [Backend Health Check](https://sql-tutor-backend.onrender.com/api/v1/health)
 ---
 
 ## Table of Contents
